@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(npm install *)",
+      "Bash(npm approve-scripts *)",
+      "Bash(npm run *)",
+      "Bash(npx wrangler *)",
+      "Bash(curl -s -m 10 http://localhost:8787/api/health)",
+      "Bash(curl *)"
     ]
   }
 }

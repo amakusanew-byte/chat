@@ -10,5 +10,10 @@
     "dev:worker": "npm run dev --workspace worker",
     "build": "npm run build --workspace web",
     "deploy": "npm run build --workspace web && npm run deploy --workspace worker"
+  },
+  "allowScripts": {
+    "esbuild@0.21.5": true,
+    "esbuild@0.28.1": true,
+    "workerd@1.20260826.1": true
   }
 }
