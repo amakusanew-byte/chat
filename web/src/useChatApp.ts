@@ -298,16 +298,17 @@ export function useChatApp() {
         // Buat chat bila belum ada (lazy)
         let chatId = activeChatRef.current;
         if (!chatId) {
-          chatId = crypto.randomUUID();
+          const newId = crypto.randomUUID();
+          chatId = newId;
           const title = (text.trim() || (images[0]?.name ?? archives[0]?.filename ?? "Chat baru")).slice(0, 60);
           const now = new Date().toISOString();
-          const chat: Chat = { id: chatId, title, created_at: now, updated_at: now };
+          const chat: Chat = { id: newId, title, created_at: now, updated_at: now };
           setChats((prev) => [chat, ...prev]);
-          setActiveChatId(chatId);
-          setMessagesByChat((prev) => ({ ...prev, [chatId]: [] }));
-          activeChatRef.current = chatId;
+          setActiveChatId(newId);
+          setMessagesByChat((prev) => ({ ...prev, [newId]: [] }));
+          activeChatRef.current = newId;
           await supabase.insert(token, "chats", [
-            { id: chatId, user_id: userRef.current?.id, title },
+            { id: newId, user_id: userRef.current?.id, title },
           ]);
         }
 

@@ -1,5 +1,11 @@
 // Inspeksi arsip RAR: daftar isi + ekstraksi file teks kecil.
-// node-unrar-js (WASM) di-import dinamis agar tidak membebani jalur request lain.
+// node-unrar-js (WASM): file .wasm di-import sebagai WebAssembly.Module
+// terkompilasi (default wrangler) lalu di-instance via hook instantiateWasm —
+// Workers melarang kompilasi WASM dari bytes dan evaluasi string dinamis,
+// jadi scripts/patch-unrar.js mem-patch emscripten/embind agar bebas keduanya.
+import unrarFactory from "node-unrar-js/esm/js/unrar";
+import { ExtractorData } from "node-unrar-js/esm/js/ExtractorData";
+import unrarWasmModule from "node-unrar-js/esm/js/unrar.wasm";
 
 const TEXT_EXTENSIONS = new Set([
   "txt", "md", "markdown", "json", "jsonc", "js", "mjs", "cjs", "ts", "tsx", "jsx",
@@ -30,12 +36,31 @@ function isProbablyText(name: string, data: Uint8Array): boolean {
   return true;
 }
 
+// Singleton modul unrar: factory hanya boleh dijalankan sekali (WASM memory global).
+let unrarModulePromise: Promise<any> | null = null;
+function getUnrar(): Promise<any> {
+  if (!unrarModulePromise) {
+    unrarModulePromise = unrarFactory({
+      // Workers melarang kompilasi WASM dari bytes saat runtime; file .wasm
+      // sudah di-import sebagai WebAssembly.Module terkompilasi oleh wrangler,
+      // tinggal di-instance dengan imports milik emscripten.
+      instantiateWasm: (info: any, receiveInstance: (instance: any) => void) => {
+        const instance = new WebAssembly.Instance(unrarWasmModule, info);
+        receiveInstance(instance);
+        return instance.exports;
+      },
+    });
+  }
+  return unrarModulePromise;
+}
+
 export async function inspectArchive(buf: ArrayBuffer): Promise<ArchiveEntry[]> {
   if (buf.byteLength > MAX_ARCHIVE_BYTES) {
     throw new Error(`Arsip terlalu besar (maks ${MAX_ARCHIVE_BYTES / 1024 / 1024} MB).`);
   }
-  const { createExtractorFromData } = await import("node-unrar-js");
-  const extractor = await createExtractorFromData(new Uint8Array(buf));
+  const unrar = await getUnrar();
+  const extractor = new (ExtractorData as any)(unrar, buf, "");
+  unrar.extractor = extractor;
 
   const listed = extractor.getFileList();
   const headers = [...listed.fileHeaders];

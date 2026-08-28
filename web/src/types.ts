@@ -12,6 +12,7 @@ export interface Block {
 
 // File hasil generate AI (content = base64)
 export interface FileAttachment {
+  type?: "file";
   id?: string;
   filename: string;
   mime?: string;

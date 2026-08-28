@@ -2,8 +2,10 @@
   "name": "worker",
   "private": true,
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "patch-unrar": "node scripts/patch-unrar.js",
+    "dev": "node scripts/patch-unrar.js && wrangler dev",
+    "deploy": "node scripts/patch-unrar.js && wrangler deploy",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "hono": "^4.6.8",
