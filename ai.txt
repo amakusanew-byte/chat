@@ -1,0 +1,4 @@
+curl https://gorouter.lived.workers.dev/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-9HIKKyg8F1yLn5KjHfzzCqasVOo4G0s9OMPbXx6FxH2VtXHc" \
+  -d '{"model":"claude-opus-5-thinking","messages":[{"role":"user","content":"Say hello in one sentence."}]}'

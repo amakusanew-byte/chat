@@ -1,0 +1,17 @@
+{
+  "name": "worker",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "hono": "^4.6.8",
+    "node-unrar-js": "^2.0.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240705.0",
+    "typescript": "^5.5.4",
+    "wrangler": "^4.0.0"
+  }
+}

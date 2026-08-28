@@ -1,0 +1,14 @@
+{
+  "name": "ai-chat",
+  "private": true,
+  "workspaces": [
+    "web",
+    "worker"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace web",
+    "dev:worker": "npm run dev --workspace worker",
+    "build": "npm run build --workspace web",
+    "deploy": "npm run build --workspace web && npm run deploy --workspace worker"
+  }
+}

@@ -1,0 +1,15 @@
+aku ingin membuat ai chat berbasis web seperti chat gpt web/ perplexity web, kekuatan ingatan sangat kuat, fiturnya:
+- kalau ai lagi mikir ada tulisan thinking atau browsing atau dll.
+- edit message
+- delete message
+- next chat
+- apa aja bisa membuat file extension apapun yang smart dan mengirimnya di chat bisa download
+- ada setting untuk personalisasi si AI
+- ada setting harus si AI gak boleh nolak
+- apa kalau model ai ada vision skill bisa lihat gambar
+- boleh perlu bisa melihat gambar
+- bisa melihat rar kalau user ngirim rar
+- ada fitur input ai provider nya kayak agen hermes (base url, name model, name provider, api key)
+- HARUS RINGAN
+- toolsnya cloudflare, github, supabase
+- ada fitur check memory semua chat digabung dan saat uncheck memory hanya di chat masing masing~
