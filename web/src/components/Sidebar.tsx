@@ -1,6 +1,8 @@
 import type { Chat, Profile } from "../types";
 
 interface Props {
+  open: boolean;
+  onClose: () => void;
   chats: Chat[];
   activeChatId: string | null;
   user: any;
@@ -14,6 +16,8 @@ interface Props {
 }
 
 export default function Sidebar({
+  open,
+  onClose,
   chats,
   activeChatId,
   user,
@@ -26,7 +30,14 @@ export default function Sidebar({
   onLogout,
 }: Props) {
   return (
-    <aside className="sidebar">
+    <>
+      {/* Overlay drawer — hanya tampil di layar sempit (lihat styles.css) */}
+      <div
+        className={`sidebar-overlay ${open ? "show" : ""}`}
+        onClick={onClose}
+        aria-hidden={!open}
+      />
+      <aside className={`sidebar ${open ? "open" : ""}`}>
       <div className="sidebar-top">
         <div className="brand">✦ AI Chat</div>
         <button className="btn-new-chat" onClick={onNew}>
@@ -80,6 +91,7 @@ export default function Sidebar({
           </button>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

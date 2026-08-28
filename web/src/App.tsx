@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { supabaseConfigured } from "./api/supabase";
 import { useChatApp } from "./useChatApp";
 import AuthGate from "./components/AuthGate";
@@ -7,6 +8,8 @@ import SettingsModal from "./components/SettingsModal";
 
 export default function App() {
   const app = useChatApp();
+  // Drawer sidebar (mobile saja; di layar lebar sidebar selalu tampil)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!supabaseConfigured) {
     return (
@@ -36,21 +39,33 @@ export default function App() {
   return (
     <div className="shell">
       <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
         chats={app.chats}
         activeChatId={app.activeChatId}
         user={app.user}
         memoryEnabled={!!app.profile?.memory_enabled}
-        onSelect={app.selectChat}
-        onNew={app.newChat}
+        onSelect={(id) => {
+          app.selectChat(id);
+          setSidebarOpen(false);
+        }}
+        onNew={() => {
+          app.newChat();
+          setSidebarOpen(false);
+        }}
         onDelete={app.deleteChat}
         onToggleMemory={(v) => app.saveProfile({ memory_enabled: v })}
-        onOpenSettings={() => app.setSettingsOpen(true)}
+        onOpenSettings={() => {
+          app.setSettingsOpen(true);
+          setSidebarOpen(false);
+        }}
         onLogout={app.logout}
       />
       <ChatView
         messages={app.messages}
         streaming={app.streaming}
         chatTitle={activeChat?.title ?? ""}
+        onOpenSidebar={() => setSidebarOpen(true)}
         onSend={app.sendMessage}
         onStop={app.stopStreaming}
         onEdit={app.editMessage}

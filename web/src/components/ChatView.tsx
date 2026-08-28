@@ -7,6 +7,7 @@ interface Props {
   messages: ChatMessage[];
   streaming: StreamingState;
   chatTitle: string;
+  onOpenSidebar: () => void;
   onSend: (text: string, images: File[], archives: ArchiveInspection[]) => void;
   onStop: () => void;
   onEdit: (id: string, newText: string) => void;
@@ -18,6 +19,7 @@ export default function ChatView({
   messages,
   streaming,
   chatTitle,
+  onOpenSidebar,
   onSend,
   onStop,
   onEdit,
@@ -27,6 +29,14 @@ export default function ChatView({
   return (
     <main className="chat-view">
       <div className="chat-head">
+        <button
+          className="menu-btn"
+          onClick={onOpenSidebar}
+          title="Buka daftar chat"
+          aria-label="Buka daftar chat"
+        >
+          ☰
+        </button>
         <span className="chat-head-title">{chatTitle || "Chat baru"}</span>
       </div>
       <MessageList
