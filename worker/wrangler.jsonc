@@ -3,6 +3,9 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-08-01",
   "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "SUPABASE_URL": "https://pjagoqbiwikdhsetxsqo.supabase.co"
+  },
   "assets": {
     "directory": "../web/dist",
     "binding": "ASSETS",

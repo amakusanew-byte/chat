@@ -5,8 +5,18 @@ import { runChat } from "./anthropic";
 import { TOOLS, executeTool } from "./tools";
 import { inspectArchive } from "./rar";
 import { refreshMemory } from "./memory";
+import { handleTelegramUpdate } from "./telegram";
 
-const app = new Hono<{ Bindings: { ASSETS: any } }>();
+type Bindings = {
+  ASSETS: any;
+  SUPABASE_URL?: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
+  TELEGRAM_BOT_TOKEN?: string;
+  TELEGRAM_SECRET?: string;
+  TELEGRAM_ALLOWED_CHAT_ID?: string;
+};
+
+const app = new Hono<{ Bindings: Bindings }>();
 
 app.get("/api/health", (c) => c.json({ ok: true }));
 
@@ -66,6 +76,32 @@ app.post("/api/chat", async (c) => {
       "x-accel-buffering": "no",
     },
   });
+});
+
+// Webhook bot Telegram. Verifikasi secret token dari header X-Telegram-Bot-Api-Secret-Token.
+app.post("/api/telegram/webhook/:secret", async (c) => {
+  const env = c.env as any;
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_SECRET) {
+    return c.json({ error: "Telegram belum dikonfigurasi" }, 503);
+  }
+  // Secret ada di path — cukup sebagai verifikasi (Telegram mengirim header juga,
+  // tapi cek path membuat setup lebih simpel dan tetap tidak bisa ditebak).
+  if (c.req.param("secret") !== env.TELEGRAM_SECRET) {
+    return c.json({ error: "unauthorized" }, 401);
+  }
+  let update: any;
+  try {
+    update = await c.req.json();
+  } catch {
+    return c.json({ error: "bad json" }, 400);
+  }
+  // Balas 200 dulu supaya Telegram tidak retry; proses update setelahnya.
+  c.executionCtx.waitUntil(
+    handleTelegramUpdate(update, env).catch((e) =>
+      console.error("telegram error:", e?.message || e)
+    )
+  );
+  return c.json({ ok: true });
 });
 
 // Inspeksi RAR: multipart "file" -> daftar isi + isi file teks

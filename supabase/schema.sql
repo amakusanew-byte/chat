@@ -47,6 +47,18 @@ create table global_memory (
   updated_at timestamptz default now()
 );
 
+-- Riwayat percakapan bot Telegram (dipakai worker via service role key)
+create table telegram_history (
+  chat_id text primary key,
+  messages jsonb not null default '[]',
+  updated_at timestamptz default now()
+);
+
+-- Row Level Security: user hanya bisa akses datanya sendiri.
+-- telegram_history TANPA policy: hanya diakses worker dengan service role key
+-- (RLS aktif + tanpa policy = tidak bisa diakses lewat anon key dari browser).
+alter table telegram_history enable row level security;
+
 -- Row Level Security: user hanya bisa akses datanya sendiri
 alter table profiles enable row level security;
 alter table chats enable row level security;

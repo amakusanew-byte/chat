@@ -1,0 +1,7 @@
+# Salin ke worker/.dev.vars untuk pengembangan lokal (jangan di-commit).
+# Di produksi, set sebagai secrets: npx wrangler secret put <NAMA>
+
+TELEGRAM_BOT_TOKEN=123456:ABC-your-botfather-token
+TELEGRAM_SECRET=tg_random_string_dari_gen_secret_js
+TELEGRAM_ALLOWED_CHAT_ID=
+SUPABASE_SERVICE_ROLE_KEY=eyJ...service_role
